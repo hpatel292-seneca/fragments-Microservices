@@ -2,6 +2,8 @@
 
 ## fragments
 
+The server will start running at `http://localhost:8080` by default.
+
 ## API Routes
 
 ### 1. /
