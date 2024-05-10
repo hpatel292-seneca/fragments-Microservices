@@ -11,5 +11,8 @@
     "url": "git+https://github.com/hpatel292-seneca/fragments.git"
   },
   "author": "Harshil Patel",
-  "license": "UNLICENSED"
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "prettier": "3.2.5"
+  }
 }
