@@ -4,7 +4,8 @@
   "version": "0.0.1",
   "description": "Fragments back-end API",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint --config eslint.config.mjs \"./src/**/*.js\""
   },
   "repository": {
     "type": "git",
@@ -13,6 +14,9 @@
   "author": "Harshil Patel",
   "license": "UNLICENSED",
   "devDependencies": {
+    "@eslint/js": "^9.2.0",
+    "eslint": "^9.2.0",
+    "globals": "^15.2.0",
     "prettier": "3.2.5"
   }
 }
