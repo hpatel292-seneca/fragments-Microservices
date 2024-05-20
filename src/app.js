@@ -3,9 +3,6 @@ const cors = require('cors');
 const helmet = require('helmet');
 const compression = require('compression');
 
-// author and version from package.json
-const { author, version } = require('../package.json');
-
 const logger = require('./logger');
 const pino = require('pino-http')({ logger });
 
@@ -24,19 +21,8 @@ app.use(cors());
 // Use gzip/deflate compression middleware
 app.use(compression());
 
-// health check route
-app.get('/', (req, res) => {
-  // Clients shouldn't cache this response (always request it fresh)
-  res.setHeader('Cache-Control', 'no-cache');
-
-  // return 200 'OK' response with info about the repo.
-  res.status(200).json({
-    status: 'ok',
-    author,
-    githubUrl: 'https://github.com/hpatel292-seneca/fragments',
-    version,
-  });
-});
+// Define our routes
+app.use('/', require('./routes'));
 
 // 404 middleware to handle any requests for resources that can't be found.
 app.use((req, res) => {
