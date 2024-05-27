@@ -6,7 +6,7 @@ const passport = require('passport');
 const authenticate = require('./auth');
 const logger = require('./logger');
 const pino = require('pino-http')({ logger });
-
+const { createErrorResponse } = require('./response');
 // Create a express app instance
 const app = express();
 
@@ -31,13 +31,16 @@ app.use('/', require('./routes'));
 
 // 404 middleware to handle any requests for resources that can't be found.
 app.use((req, res) => {
-  res.status(404).json({
-    status: 'error',
-    error: {
-      message: 'not found',
-      code: 404,
-    },
-  });
+  res.status(404).json(
+    createErrorResponse(404, 'Not Found')
+    //   {
+    //   status: 'error',
+    //   error: {
+    //     message: 'not found',
+    //     code: 404,
+    //   },
+    // }
+  );
 });
 
 // error-handling middleware to deal with anything else
@@ -51,13 +54,16 @@ app.use((err, req, res, next) => {
     logger.error({ err }, `Error processing request`);
   }
 
-  res.status(status).json({
-    status: 'error',
-    error: {
-      message,
-      code: status,
-    },
-  });
+  res.status(status).json(
+    createErrorResponse(status, message)
+    //   {
+    //   status: 'error',
+    //   error: {
+    //     message,
+    //     code: status,
+    //   },
+    // }
+  );
 });
 
 // Export our `app`

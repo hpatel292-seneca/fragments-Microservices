@@ -9,7 +9,7 @@ const { version, author } = require('../../package.json');
 const router = express.Router();
 // Our authentication middleware
 const { authenticate } = require('../auth');
-
+const { createSuccessResponse } = require('../response');
 /**
  * Expose all of our API routes on /v1/* to include an API version.
  * Protect them all with middleware so you have to be authenticated
@@ -30,12 +30,13 @@ router.get('/', (req, res) => {
   res.setHeader('Cache-Control', 'no-cache');
   // Send a 200 'OK' response
   // return 200 'OK' response with info about the repo.
-  res.status(200).json({
-    status: 'ok',
-    author,
-    githubUrl: 'https://github.com/hpatel292-seneca/fragments',
-    version,
-  });
+  res.status(200).json(
+    createSuccessResponse({
+      author,
+      githubUrl: 'https://github.com/hpatel292-seneca/fragments',
+      version,
+    })
+  );
 });
 
 module.exports = router;
