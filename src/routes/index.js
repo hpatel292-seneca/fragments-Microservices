@@ -28,7 +28,6 @@ router.use(`/v1`, require('./api'));
 router.get('/', (req, res) => {
   // Client's shouldn't cache this response (always request it fresh)
   res.setHeader('Cache-Control', 'no-cache');
-  // Send a 200 'OK' response
   // return 200 'OK' response with info about the repo.
   res.status(200).json(
     createSuccessResponse({
