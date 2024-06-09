@@ -3,6 +3,7 @@
 const { randomUUID } = require('crypto');
 // Use https://www.npmjs.com/package/content-type to create/parse Content-Type headers
 const contentType = require('content-type');
+const logger = require('../logger');
 
 // Functions for working with fragment metadata/data using our DB
 const {
@@ -13,7 +14,7 @@ const {
   listFragments,
   deleteFragment,
 } = require('./data');
-const { write } = require('fs');
+//const { write } = require('fs');
 
 const validTypes = [
   `text/plain`,
@@ -42,7 +43,7 @@ class Fragment {
     if (!validTypes.includes(arr[0].trim())) {
       throw new Error('type must be a supported type and got ' + arr[0].trim());
     }
-    this.id = id || crypto.randomUUID();
+    this.id = id || randomUUID();
     this.ownerId = ownerId;
     this.type = type;
     this.size = size;
@@ -84,25 +85,25 @@ class Fragment {
    * @param {string} id fragment's id
    * @returns Promise<void>
    */
-  static delete(ownerId, id) {
-    return deleteFragment(ownerId, id);
+  static async delete(ownerId, id) {
+    return await deleteFragment(ownerId, id);
   }
 
   /**
    * Saves the current fragment to the database
    * @returns Promise<void>
    */
-  save() {
+  async save() {
     this.updated = new Date().toISOString();
-    writeFragment(this);
+    await writeFragment(this);
   }
 
   /**
    * Gets the fragment's data from the database
    * @returns Promise<Buffer>
    */
-  getData() {
-    return readFragmentData(this.ownerId, this.id);
+  async getData() {
+    return await readFragmentData(this.ownerId, this.id);
   }
 
   /**
@@ -117,7 +118,7 @@ class Fragment {
     this.size = data.length;
     this.updated = new Date().toISOString();
     writeFragment(this);
-    await writeFragmentData(this.ownerId, this.id, data);
+    return await writeFragmentData(this.ownerId, this.id, data);
   }
 
   /**
@@ -154,6 +155,7 @@ class Fragment {
    * @returns {boolean} true if we support this Content-Type (i.e., type/subtype)
    */
   static isSupportedType(value) {
+    logger.debug(`isSupportedType with value: ${value}`);
     let arr = value.split(';');
     return validTypes.includes(arr[0].trim());
   }
