@@ -57,12 +57,14 @@ module.exports = async (req, res) => {
     .location(location)
     .json(
       createSuccessResponse({
-        id: fragment.id,
-        ownerId: fragment.ownerId,
-        created: fragment.created,
-        updated: fragment.updated,
-        type: fragment.type,
-        size: fragment.size,
+        fragment: {
+          id: fragment.id,
+          ownerId: fragment.ownerId,
+          created: fragment.created,
+          updated: fragment.updated,
+          type: fragment.type,
+          size: fragment.size,
+        },
       })
     );
 };

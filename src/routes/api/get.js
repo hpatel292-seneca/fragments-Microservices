@@ -20,8 +20,19 @@ const getFragments = async (req, res) => {
 };
 
 const splitExtension = (id) => {
+  const mimeType = {
+    '.txt': 'text/plain',
+    '.md': 'text/markdown',
+    '.html': 'text/html',
+    '.csv': 'text/csv',
+    '.json': 'application/json',
+    '.png': 'image/png',
+    '.jpeg': 'image/jpeg',
+    '.webp': 'image/webp',
+    '.avif': 'image/avif',
+  };
   const arr = id.split('.');
-  const extension = arr[1] ? arr[1] : '';
+  const extension = arr[1] ? mimeType['.' + arr[1]] : '';
   // return extension and ID
   return { fragmentId: arr[0], extension: extension };
 };
@@ -32,9 +43,6 @@ const getFragmentByID = async (req, res) => {
   const { id } = req.params;
   logger.debug(`get fragment by ID ${id}`);
   let { fragmentId, extension } = splitExtension(id);
-  if (extension) {
-    extension = '.' + extension;
-  }
   const ownerId = req.user;
 
   let fragment, fragmentMetadata;
@@ -53,7 +61,7 @@ const getFragmentByID = async (req, res) => {
   if (extension) {
     logger.debug(`Return fragment in type ${extension}`);
 
-    if (extension == '.txt') {
+    if (fragment.formats.includes(extension)) {
       const fragmentData = await fragment.getData();
 
       res.status(200).type(fragment.mimeType).send(fragmentData);

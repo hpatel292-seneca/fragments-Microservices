@@ -115,7 +115,7 @@ class Fragment {
     if (data === undefined) {
       throw new Error('data must be specified');
     }
-    this.size = data.length;
+    this.size = Buffer.byteLength(data);
     this.updated = new Date().toISOString();
     writeFragment(this);
     return await writeFragmentData(this.ownerId, this.id, data);
@@ -145,8 +145,19 @@ class Fragment {
    * @returns {Array<string>} list of supported mime types
    */
   get formats() {
-    const { type } = contentType.parse(this.type);
-    return [type];
+    const validConversions = {
+      'text/plain': ['text/plain'],
+      'text/markdown': ['text/markdown', 'text/html', 'text/plain'],
+      'text/html': ['text/html', 'text/plain'],
+      'text/csv': ['text/csv', 'text/plain', 'application/json'],
+      'application/json': ['application/json', 'text/plain'],
+      'image/png': ['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/avif'],
+      'image/jpeg': ['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/avif'],
+      'image/webp': ['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/avif'],
+      'image/avif': ['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/avif'],
+      'image/gif': ['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/avif'],
+    };
+    return validConversions[this.mimeType] || false;
   }
 
   /**
