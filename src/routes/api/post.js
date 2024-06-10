@@ -29,28 +29,22 @@ module.exports = async (req, res) => {
 
   let fragment;
 
-  try {
-    // Creating a fragment metadata!
-    logger.debug(`User: ${req.user}`);
-    fragment = new Fragment({ ownerId: req.user, type: type });
-    // Saving the fragment metadata!
-    await fragment.save();
-    // Storing the fragment data!
-    await fragment.setData(rawFragmentData);
-  } catch (error) {
-    logger.error(`Error while storing the fragment. Error: ${error}`);
-    res.status(500).json(createErrorResponse(500, 'Internal Server Error!'));
-    return;
-  }
+  // Creating a fragment metadata!
+  logger.debug(`User: ${req.user}`);
+  fragment = new Fragment({ ownerId: req.user, type: type });
+  // Saving the fragment metadata!
+  await fragment.save();
+  // Storing the fragment data!
+  await fragment.setData(rawFragmentData);
 
   // fragment url
   const location = (process.env.API_URL || req.headers.host) + `/v1/fragments/${fragment.id}`;
 
   // make sure location is properly created
-  if (!location) {
-    logger.error({ location }, 'Error creating fragment location');
-    res.status(500).json(createErrorResponse(500, 'Internal Server Error'));
-  }
+  // if (!location) {
+  //   logger.error({ location }, 'Error creating fragment location');
+  //   res.status(500).json(createErrorResponse(500, 'Internal Server Error'));
+  // }
 
   res
     .status(201)
