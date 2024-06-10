@@ -34,7 +34,7 @@ router.put('/fragments/:id', rawBody(), updateFragment);
 // Post /v1/fragment
 router.post('/fragments', rawBody(), require('./post'));
 // get /v1/fragments/:id/info
-router.get('/fragments/:id/info', getFragmentInfo);
+//router.get('/fragments/:id/info', getFragmentInfo);
 // Delete /v1/fragments/:id
 router.delete('/fragments/:id', deleteFragmentById);
 

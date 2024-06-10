@@ -59,5 +59,6 @@ describe('Post /v1/fragments', () => {
       .send('This is a fragment');
 
     expect(res.statusCode).toBe(415);
+    expect(res.body.error.message).toBe('Unsupported fragment type requested by the client!');
   });
 });
