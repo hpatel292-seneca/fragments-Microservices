@@ -1,0 +1,11 @@
+.github/
+.vscode/
+coverage/
+node_modules/
+tests/
+!tests/.htpasswd
+.env
+.gitignore
+.prettier*
+jest*
+env.jest
