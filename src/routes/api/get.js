@@ -82,25 +82,25 @@ const getFragmentByID = async (req, res) => {
   res.status(200).type(fragment.mimeType).send(fragmentData);
 };
 
-// const getFragmentInfo = async (req, res) => {
-//   const { id } = req.params;
+const getFragmentInfo = async (req, res) => {
+  const { id } = req.params;
 
-//   let fragmentMetadata;
+  let fragmentMetadata;
 
-//   try {
-//     fragmentMetadata = await Fragment.byId(req.user, id);
+  try {
+    fragmentMetadata = await Fragment.byId(req.user, id);
 
-//     logger.debug({ fragmentMetadata }, 'fragment metadata');
-//   } catch (error) {
-//     logger.error(`No fragment with ID ${id} found. Error: ${error}`);
-//     res.status(404).json(createErrorResponse(404, `No fragment with ID ${id} found`));
-//     return;
-//   }
+    logger.debug({ fragmentMetadata }, 'fragment metadata');
+  } catch (error) {
+    logger.error(`No fragment with ID ${id} found. Error: ${error}`);
+    res.status(404).json(createErrorResponse(404, `No fragment with ID ${id} found`));
+    return;
+  }
 
-//   res.status(200).json(createSuccessResponse({ fragment: fragmentMetadata }));
-// };
+  res.status(200).json(createSuccessResponse({ fragment: fragmentMetadata }));
+};
 module.exports = {
   getFragments,
   getFragmentByID,
-  // getFragmentInfo,
+  getFragmentInfo,
 };
