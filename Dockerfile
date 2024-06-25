@@ -1,6 +1,6 @@
 #############################################################################################################################
 # Stage 0: Install the base dependecies
-FROM node:20-alpine@sha256:804aa6a6476a7e2a5df8db28804aa6c1c97904eefb01deed5d6af24bb51d0c81 AS dependencies
+FROM node:20-alpine@sha256:55004633597a2e059ca930a7cca9785b94125eb9442a1e31a6a4707dacfa348b AS dependencies
 
 # explicit path - Copy the package.json and package-lock.json files into /app.
 COPY package*.json /app/
@@ -13,11 +13,12 @@ RUN npm ci --production
 
 ##############################################################################################################################
 # Stage 1: Copy required files and Deploy
-FROM node:20-alpine@sha256:804aa6a6476a7e2a5df8db28804aa6c1c97904eefb01deed5d6af24bb51d0c81 AS build
+FROM node:20-alpine@sha256:55004633597a2e059ca930a7cca9785b94125eb9442a1e31a6a4707dacfa348b AS build
 
 LABEL maintainer="Harshil Patel <hpatel292@myseneca.ca>"
 LABEL description="Fragments node.js microservice"
 
+USER root
 # We default to use port 8080 in our service
 
 # Reduce npm spam when installing within Docker
@@ -43,6 +44,10 @@ COPY --chown=node:node ./src ./src
 
 # Copy our HTPASSWD file
 COPY ./tests/.htpasswd ./tests/.htpasswd
+
+# Install curl for healthcheck
+RUN apk update
+RUN apk add curl
 
 # Switch user to node
 USER node
