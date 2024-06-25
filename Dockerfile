@@ -18,7 +18,6 @@ FROM node:20-alpine@sha256:55004633597a2e059ca930a7cca9785b94125eb9442a1e31a6a47
 LABEL maintainer="Harshil Patel <hpatel292@myseneca.ca>"
 LABEL description="Fragments node.js microservice"
 
-USER root
 # We default to use port 8080 in our service
 
 # Reduce npm spam when installing within Docker
