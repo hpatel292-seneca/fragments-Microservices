@@ -45,14 +45,15 @@ COPY --chown=node:node ./src ./src
 COPY ./tests/.htpasswd ./tests/.htpasswd
 
 # Install curl for healthcheck
-RUN apk update
-RUN apk add curl
+RUN apk update && apk add --no-cache curl=8.8.0-r0
 
 # Switch user to node
 USER node
 
 # Start the container by running our server
-CMD npm start
+# fix the warning given by Halolint "warning: Use arguments JSON notation for CMD and ENTRYPOINT arguments"
+CMD ["npm", "start"]
+
 
 # We run our service on port 8080
 EXPOSE 8080
