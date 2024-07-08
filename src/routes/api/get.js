@@ -2,6 +2,7 @@
 const { createSuccessResponse, createErrorResponse } = require('../../response');
 const logger = require('../../logger');
 const { Fragment } = require('../../model/fragment');
+const markdownit = require('markdown-it');
 
 /**
  * Get a list of fragments for the current user
@@ -63,8 +64,13 @@ const getFragmentByID = async (req, res) => {
 
     if (fragment.formats.includes(extension)) {
       const fragmentData = await fragment.getData();
-
-      res.status(200).type(fragment.mimeType).send(fragmentData);
+      if (fragment.mimeType == 'text/markdown' && extension == 'text/html') {
+        const md = markdownit();
+        const result = md.render(fragmentData);
+        res.status(200).type(extension).send(result);
+        return;
+      }
+      res.status(200).type(fragment.mimeType).send(`${fragmentData}`);
       return;
     } else {
       logger.error({ extension }, 'Unsupport extension demanded!');

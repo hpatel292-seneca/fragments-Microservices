@@ -2,6 +2,7 @@ const request = require('supertest');
 const app = require('../../src/app');
 const hash = require('../../src/hash');
 const { Fragment } = require('../../src/model/fragment');
+const markdownit = require('markdown-it');
 
 describe('GET /v1/fragments/:id', () => {
   // If the request is missing the Authorization header, it should be forbidden
@@ -73,6 +74,23 @@ describe('GET /v1/fragments/:id.ext', () => {
     expect(res_2.text).toBe(body);
   });
 
+  // should return markdown fragments to html.
+  test('should return markdown fragments to html', async () => {
+    const body = '# Heading level 1';
+    const ownerId = hash('user1@email.com');
+    const id = 'rdmId';
+    const type = 'text/markdown';
+    const fragMetadata1 = new Fragment({ id: id, ownerId: ownerId, type: type });
+    fragMetadata1.setData(body);
+    fragMetadata1.save();
+    const md = markdownit();
+    const result = md.render(body);
+    const res = await request(app)
+      .get(`/v1/fragments/${id}.html`)
+      .auth('user1@email.com', 'password1');
+    expect(res.statusCode).toBe(200);
+    expect(res.text).toBe(`${result}`);
+  });
   // should return 415 if unsupported extension is requested
   test('should return 415 if unsupported extension is requested', async () => {
     // post a fragment
