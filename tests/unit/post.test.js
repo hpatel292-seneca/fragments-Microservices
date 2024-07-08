@@ -45,17 +45,17 @@ describe('Post /v1/fragments', () => {
     expect(res.headers['location']).toMatch(/\/v1\/fragments\/[a-f0-9-]+$/);
   });
 
-  // // Authenticated user can create text/html fragments
-  // test('authenticated user can create text/markdown fragments and location must returned in header', async () => {
-  //   const res = await request(app)
-  //     .post('/v1/fragments')
-  //     .auth('user1@email.com', 'password1')
-  //     .set('Content-Type', 'text/plain')
-  //     .send('# Heading level 1');
-  //   expect(res.statusCode).toBe(201);
-  //   expect(res.body.status).toBe('ok');
-  //   expect(res.headers['location']).toMatch(/\/v1\/fragments\/[a-f0-9-]+$/);
-  // });
+  // Authenticated user can create text/csv fragments
+  test('authenticated user can create text/csv fragments and location must returned in header', async () => {
+    const res = await request(app)
+      .post('/v1/fragments')
+      .auth('user1@email.com', 'password1')
+      .set('Content-Type', 'text/csv')
+      .send('Harshil, Patel');
+    expect(res.statusCode).toBe(201);
+    expect(res.body.status).toBe('ok');
+    expect(res.headers['location']).toMatch(/\/v1\/fragments\/[a-f0-9-]+$/);
+  });
 
   // // Authenticated user can create text/markdown fragments
   // test('authenticated user can create text/markdown fragments and location must returned in header', async () => {
