@@ -31,13 +31,16 @@ describe('GET /v1/fragments', () => {
     const res_2 = await request(app).get('/v1/fragments').auth('user1@email.com', 'password1');
     expect(res_2.body.fragments[0]).toBe(id);
   });
+});
 
-  // fetching correct fragments with passed expand=1
+describe('/v1/fragments?expand=1', () => {
+  // fetching correct fragments with passed expand=1 as query parameter
   test('fetching correct fragments when passed expand=1', async () => {
+    const type='text/plain';
     const res = await request(app)
       .post('/v1/fragments')
       .auth('user1@email.com', 'password1')
-      .set('Content-Type', 'text/plain')
+      .set('Content-Type', type)
       .send('This is a fragment');
     const id = res.body.fragment.id;
 
@@ -47,7 +50,7 @@ describe('GET /v1/fragments', () => {
     // [1] because post request has been made in above test.
     expect(res_2.body.fragments[1].id).toBe(id);
     expect(res_2.body.fragments[1].ownerId).toBe(hash('user1@email.com'));
-    expect(res_2.body.fragments[1].type).toBe('text/plain');
+    expect(res_2.body.fragments[1].type).toBe(type);
   });
 });
 
