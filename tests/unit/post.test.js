@@ -9,12 +9,12 @@ describe('Post /v1/fragments', () => {
   test('incorrect credentials are denied', () =>
     request(app).post('/v1/fragments').auth('invalid@email.com', 'incorrect_password').expect(401));
 
-  // Using a valid username/password pair should give a success result for post request
+  // Using a valid username/password pair should give a success result for post request for plain text
   test('authenticated users can create a plain text fragment and location must returned in header', async () => {
     const res = await request(app)
       .post('/v1/fragments')
       .auth('user1@email.com', 'password1')
-      .set('Content-Type', 'text/markdown')
+      .set('Content-Type', 'text/plain')
       .send('This is a fragment');
     expect(res.statusCode).toBe(201);
     expect(res.body.status).toBe('ok');
@@ -23,6 +23,18 @@ describe('Post /v1/fragments', () => {
 
   // Authenticated user can create text/markdown fragments
   test('authenticated user can create text/markdown fragments and location must returned in header', async () => {
+    const res = await request(app)
+      .post('/v1/fragments')
+      .auth('user1@email.com', 'password1')
+      .set('Content-Type', 'text/markdown')
+      .send('# Heading level 1');
+    expect(res.statusCode).toBe(201);
+    expect(res.body.status).toBe('ok');
+    expect(res.headers['location']).toMatch(/\/v1\/fragments\/[a-f0-9-]+$/);
+  });
+
+  // Authenticated user can create text/html fragments
+  test('authenticated user can create text/html fragments and location must returned in header', async () => {
     const res = await request(app)
       .post('/v1/fragments')
       .auth('user1@email.com', 'password1')
