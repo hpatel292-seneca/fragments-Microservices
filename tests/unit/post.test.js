@@ -57,29 +57,17 @@ describe('Post /v1/fragments', () => {
     expect(res.headers['location']).toMatch(/\/v1\/fragments\/[a-f0-9-]+$/);
   });
 
-  // // Authenticated user can create text/markdown fragments
-  // test('authenticated user can create text/markdown fragments and location must returned in header', async () => {
-  //   const res = await request(app)
-  //     .post('/v1/fragments')
-  //     .auth('user1@email.com', 'password1')
-  //     .set('Content-Type', 'text/plain')
-  //     .send('# Heading level 1');
-  //   expect(res.statusCode).toBe(201);
-  //   expect(res.body.status).toBe('ok');
-  //   expect(res.headers['location']).toMatch(/\/v1\/fragments\/[a-f0-9-]+$/);
-  // });
-
-  // // Authenticated user can create text/markdown fragments
-  // test('authenticated user can create text/markdown fragments and location must returned in header', async () => {
-  //   const res = await request(app)
-  //     .post('/v1/fragments')
-  //     .auth('user1@email.com', 'password1')
-  //     .set('Content-Type', 'text/plain')
-  //     .send('# Heading level 1');
-  //   expect(res.statusCode).toBe(201);
-  //   expect(res.body.status).toBe('ok');
-  //   expect(res.headers['location']).toMatch(/\/v1\/fragments\/[a-f0-9-]+$/);
-  // });
+  // Authenticated user can create application/json fragments
+  test('authenticated user can create application/json fragments and location must returned in header', async () => {
+    const res = await request(app)
+      .post('/v1/fragments')
+      .auth('user1@email.com', 'password1')
+      .set('Content-Type', 'application/json')
+      .send({ name: 'Harshil' });
+    expect(res.statusCode).toBe(201);
+    expect(res.body.status).toBe('ok');
+    expect(res.headers['location']).toMatch(/\/v1\/fragments\/[a-f0-9-]+$/);
+  });
 
   // response include all necessary and expected properties
   test('post return fragment with all necessary properties', async () => {
@@ -94,6 +82,7 @@ describe('Post /v1/fragments', () => {
       .set('Content-Type', type)
       .send(data);
     expect(res.statusCode).toBe(201);
+
     // verify all properties of the fragment object
     const fragment = res.body.fragment;
     expect(fragment).toHaveProperty('id');
