@@ -3,6 +3,7 @@
 const request = require('supertest');
 const hash = require('../../src/hash');
 const app = require('../../src/app');
+const { Fragment } = require('../../src/model/fragment');
 
 describe('GET /v1/fragments', () => {
   // If the request is missing the Authorization header, it should be forbidden
@@ -36,7 +37,7 @@ describe('GET /v1/fragments', () => {
 describe('/v1/fragments?expand=1', () => {
   // fetching correct fragments with passed expand=1 as query parameter
   test('fetching correct fragments when passed expand=1', async () => {
-    const type='text/plain';
+    const type = 'text/plain';
     const res = await request(app)
       .post('/v1/fragments')
       .auth('user1@email.com', 'password1')
@@ -69,12 +70,13 @@ describe('GET /v1/fragments/:id/info', () => {
   // Using a valid username/password pair should return fragment info
   test('authenticated users get fragment info', async () => {
     // First create a fragment to have an ID to query
-    const createRes = await request(app)
-      .post('/v1/fragments')
-      .auth('user1@email.com', 'password1')
-      .set('Content-Type', 'text/plain')
-      .send('This is a fragment');
-    const id = createRes.body.fragment.id;
+    const ownerId = hash('user1@email.com');
+    const body = 'This is a fragment';
+    const contentType = 'text/plain';
+    const id = 'rmdID';
+    const fragMetadata = new Fragment({ id: id, ownerId: ownerId, type: contentType });
+    fragMetadata.setData(body);
+    fragMetadata.save();
 
     // Then query the fragment info
     const res = await request(app)
@@ -84,8 +86,8 @@ describe('GET /v1/fragments/:id/info', () => {
     expect(res.body.status).toBe('ok');
     expect(res.body.fragment).toBeDefined();
     expect(res.body.fragment.id).toBe(id);
-    expect(res.body.fragment.ownerId).toBeDefined();
-    expect(res.body.fragment.type).toBe('text/plain');
+    expect(res.body.fragment.ownerId).toBe(ownerId);
+    expect(res.body.fragment.type).toBe(contentType);
   });
 
   // Requesting info for a non-existent fragment should return 404
