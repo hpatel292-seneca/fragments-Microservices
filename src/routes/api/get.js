@@ -66,7 +66,7 @@ const getFragmentByID = async (req, res) => {
       const fragmentData = await fragment.getData();
       if (fragment.mimeType == 'text/markdown' && extension == 'text/html') {
         const md = markdownit();
-        const result = md.render(fragmentData);
+        const result = md.render(`${fragmentData}`);
         res.status(200).type(extension).send(result);
         return;
       }
