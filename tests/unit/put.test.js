@@ -28,8 +28,8 @@ describe('PUT /v1/fragments/:id', () => {
     expect(newData.toString('utf-8')).toBe(updated_body);
   });
 
-  // Should throw if fragment didn't exist
-  test("Should throw if fragment didn't exist", async () => {
+  // Should throw if new content type is not supported
+  test('Should throw if new content type is not supported', async () => {
     const ownerId = hash('user1@email.com');
     const id = 'rdmId';
     const fragMetadata = new Fragment({ id: id, ownerId: ownerId, type: 'text/plain' });
@@ -44,5 +44,17 @@ describe('PUT /v1/fragments/:id', () => {
       .send(body);
     expect(res.statusCode).toBe(415);
     expect(res.body.error.message).toBe('Unsupported fragment type requested by the client!');
+  });
+
+  // Should throw if fragment didn't exist
+  test("Should throw if fragment didn't exist", async () => {
+    const id = 'rdmId100';
+    const res = await request(app)
+      .put(`/v1/fragments/${id}`)
+      .auth('user1@email.com', 'password1')
+      .set('Content-Type', 'text/plain')
+      .send('This is a test fragment');
+    expect(res.statusCode).toBe(404);
+    expect(res.body.error.message).toBe(`No fragment with ID ${id} found`);
   });
 });
