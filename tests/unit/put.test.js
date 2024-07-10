@@ -57,4 +57,23 @@ describe('PUT /v1/fragments/:id', () => {
     expect(res.statusCode).toBe(404);
     expect(res.body.error.message).toBe(`No fragment with ID ${id} found`);
   });
+
+  // Should throw if new fragment content type is not same to prev content type
+  test('Should throw if new fragment content type is not same to prev content type', async () => {
+    const ownerId = hash('user1@email.com');
+    const id = 'rdmId100';
+    const fragMetadata = new Fragment({ id: id, ownerId: ownerId, type: 'text/plain' });
+    const body = 'This is a fragment';
+    const updated_body = 'This is updated fragment';
+    fragMetadata.setData(body);
+    fragMetadata.save();
+
+    const res = await request(app)
+      .put(`/v1/fragments/${id}`)
+      .auth('user1@email.com', 'password1')
+      .set('Content-Type', 'text/html')
+      .send(updated_body);
+    expect(res.statusCode).toBe(400);
+    expect(res.body.error.message).toBe('Cannot change type of the fragment to text/html!');
+  });
 });
