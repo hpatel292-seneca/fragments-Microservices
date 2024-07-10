@@ -15,8 +15,6 @@ const deleteFragmentById = async (req, res) => {
     res.status(404).json(createErrorResponse(404, `No fragment with ID ${id} found`));
     return;
   }
-
   res.status(200).json(createSuccessResponse(200, {}));
 };
-
 module.exports = { deleteFragmentById };
