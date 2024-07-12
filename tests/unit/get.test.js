@@ -199,6 +199,7 @@ describe('GET /v1/fragments/:id.ext', () => {
     fragMetadata1.save();
     const md = markdownit();
     const result = md.render(body);
+
     const res = await request(app)
       .get(`/v1/fragments/${id}.html`)
       .auth('user1@email.com', 'password1');
@@ -208,19 +209,18 @@ describe('GET /v1/fragments/:id.ext', () => {
   // should return 415 if unsupported extension is requested
   test('should return 415 if unsupported extension is requested', async () => {
     // post a fragment
+    const ownerId = hash('user1@email.com');
+    const id = 'rdmId';
+    const fragMetadata1 = new Fragment({ id: id, ownerId: ownerId, type: 'text/plain' });
     const body = 'This is a fragment';
-    const res = await request(app)
-      .post('/v1/fragments')
-      .auth('user1@email.com', 'password1')
-      .set('Content-Type', 'text/plain')
-      .send(body);
-    const id = res.body.fragment.id;
+    fragMetadata1.setData(body);
+    fragMetadata1.save();
 
-    const res_2 = await request(app)
+    const res = await request(app)
       .get(`/v1/fragments/${id}.png`)
       .auth('user1@email.com', 'password1');
-    expect(res_2.statusCode).toBe(415);
-    expect(res_2.body).toEqual({
+    expect(res.statusCode).toBe(415);
+    expect(res.body).toEqual({
       status: 'error',
       error: {
         code: 415,
