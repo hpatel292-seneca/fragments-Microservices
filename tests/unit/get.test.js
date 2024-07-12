@@ -20,17 +20,18 @@ describe('GET /v1/fragments', () => {
     expect(res.body.status).toBe('ok');
     expect(Array.isArray(res.body.fragments)).toBe(true);
   });
+
   // fetching correct fragments
   test('fetching correct fragments', async () => {
-    const res = await request(app)
-      .post('/v1/fragments')
-      .auth('user1@email.com', 'password1')
-      .set('Content-Type', 'text/plain')
-      .send('This is a fragment');
-    const id = res.body.fragment.id;
+    const ownerId = hash('user1@email.com');
+    const id = 'rdmId';
+    const fragMetadata1 = new Fragment({ id: id, ownerId: ownerId, type: 'text/plain' });
+    const body = 'This is a fragment';
+    fragMetadata1.setData(body);
+    fragMetadata1.save();
 
-    const res_2 = await request(app).get('/v1/fragments').auth('user1@email.com', 'password1');
-    expect(res_2.body.fragments[0]).toBe(id);
+    const res = await request(app).get('/v1/fragments').auth('user1@email.com', 'password1');
+    expect(res.body.fragments[0]).toBe(id);
   });
 });
 
