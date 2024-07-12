@@ -174,19 +174,18 @@ describe('GET /v1/fragments/:id.ext', () => {
   // should return fragment data successfully with extension
   test('should return fragment data with extension', async () => {
     // post a fragment
+    const ownerId = hash('user1@email.com');
+    const id = 'rdmId';
+    const fragMetadata1 = new Fragment({ id: id, ownerId: ownerId, type: 'text/plain' });
     const body = 'This is a fragment';
-    const res = await request(app)
-      .post('/v1/fragments')
-      .auth('user1@email.com', 'password1')
-      .set('Content-Type', 'text/plain')
-      .send(body);
-    const id = res.body.fragment.id;
+    fragMetadata1.setData(body);
+    fragMetadata1.save();
 
-    const res_2 = await request(app)
+    const res = await request(app)
       .get(`/v1/fragments/${id}.txt`)
       .auth('user1@email.com', 'password1');
-    expect(res_2.statusCode).toBe(200);
-    expect(res_2.text).toBe(body);
+    expect(res.statusCode).toBe(200);
+    expect(res.text).toBe(body);
   });
 
   // should return markdown fragments to html.
