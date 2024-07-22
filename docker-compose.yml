@@ -19,3 +19,12 @@ services:
     # Ports to publish
     ports:
       - '8080:8080'
+
+  # DynamoDB local, see: https://hub.docker.com/r/amazon/dynamodb-local
+  dynamodb-local:
+    image: amazon/dynamodb-local
+    ports:
+      - '8000:8000'
+    # Run the database in memorty, see:
+    # https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.UsageNotes.html
+    command: ['-jar', 'DynamoDBLocal.jar', '-inMemory']
