@@ -48,7 +48,7 @@ COPY ./tests/.htpasswd ./tests/.htpasswd
 RUN apk update && apk add --no-cache curl=8.8.0-r0
 
 # Switch user to node
-USER node
+# USER node
 
 # Start the container by running our server
 # fix the warning given by Halolint "warning: Use arguments JSON notation for CMD and ENTRYPOINT arguments"
