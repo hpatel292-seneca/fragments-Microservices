@@ -1,0 +1,21 @@
+# docker-compose.yml
+
+services:
+  # Fragments microservice API server
+  fragments:
+    # Use a proper init process (tini)
+    init: true
+    # Build the Docker Image using the Dockerfile
+    # and current directory as the build context
+    build: .
+    # Environment variables to use
+    environment:
+      # Our API will be running on http://localhost:8080
+      - API_URL=http://localhost:8080
+      # Use Basic Auth (for running tests, CI)
+      - HTPASSWD_FILE=tests/.htpasswd
+      # Use the LOG_LEVEL set in the host environment, or default to info
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+    # Ports to publish
+    ports:
+      - '8080:8080'
