@@ -78,7 +78,7 @@ jobs:
           ECR_REPO: fragments
           VERSION_TAG: ${{ github.ref_name }}
           AWS_COGNITO_POOL_ID: ${{ secrets.AWS_COGNITO_POOL_ID }}
-          AWS_COGNITO_CLIENT_ID: ${{secrets.AWS_COGNITO_CLIENT_ID}}
+          AWS_COGNITO_CLIENT_ID: ${{ secrets.AWS_COGNITO_CLIENT_ID }}
           API_URL: http://fragments-lb-1228717397.us-east-1.elb.amazonaws.com/
         with:
           task-definition: fragments-definition.json
