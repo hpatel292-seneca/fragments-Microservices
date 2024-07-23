@@ -38,7 +38,7 @@ module.exports = async (req, res) => {
   await fragment.setData(rawFragmentData);
 
   // fragment url
-  const location = (process.env.API_URL || req.headers.host) + `/v1/fragments/${fragment.id}`;
+  const location = (process.env.API_URL || req.headers.host) + `v1/fragments/${fragment.id}`;
 
   // make sure location is properly created
   // if (!location) {
