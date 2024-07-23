@@ -20,6 +20,10 @@
         {
           "name": "PORT",
           "value": "80"
+        },
+        {
+          "name": "AWS_S3_BUCKET_NAME",
+          "value": "hpatel292-fragments"
         }
       ],
       "environmentFiles": [],
