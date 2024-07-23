@@ -1,0 +1,40 @@
+# docker-compose.local.yml for Local development
+services:
+  fragments:
+    init: true
+    build: .
+    environment:
+      # Our API will be running on http://localhost:8080
+      - API_URL=http://localhost:8080
+      # Use Basic Auth (for running tests, CI)
+      - HTPASSWD_FILE=tests/.htpasswd
+      # Use the LOG_LEVEL set in the host environment, or default to debug
+      - LOG_LEVEL=${LOG_LEVEL:-debug}
+      # AWS credentials to use, default to "test"
+      - AWS_ACCESS_KEY_ID=minio-access-key
+      - AWS_SECRET_ACCESS_KEY=minio-secret-key
+      - AWS_REGION=us-east-1
+      # Use minio as our S3 endpoint
+      - AWS_S3_ENDPOINT_URL=http://minio:9000
+      - AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME:-fragments}
+    ports:
+      - '8080:8080'
+
+  minio:
+    image: minio/minio
+    command: server --console-address ":9001" /data
+    ports:
+      # The minio API endpoint
+      - '9000:9000'
+      # The minio web console endpoint
+      - '9001:9001'
+    environment:
+      # See https://docs.min.io/minio/baremetal/reference/minio-server/minio-server.html#environment-variables
+      # Root user (Access Key, typically a long, random string)
+      - MINIO_ROOT_USER=minio-access-key
+      # Root user's password (Secret Key, typically a long, random string)
+      - MINIO_ROOT_PASSWORD=minio-secret-key
+    volumes:
+      # Use what's in `./minio/data` as the storage volume
+      # NOTE: add this to your .gitignore
+      - ./minio/data:/data
