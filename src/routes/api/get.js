@@ -53,39 +53,42 @@ const getFragmentByID = async (req, res) => {
     logger.debug({ fragmentMetadata }, 'Fragment Metadata');
 
     fragment = new Fragment(fragmentMetadata);
+
+    if (extension) {
+      logger.debug(`Return fragment in type ${extension}`);
+
+      if (fragment.formats.includes(extension)) {
+        const fragmentData = await fragment.getData();
+        if (fragment.mimeType == 'text/markdown' && extension == 'text/html') {
+          const md = markdownit();
+          const result = md.render(`${fragmentData}`);
+          res.status(200).type(extension).send(result);
+          return;
+        }
+        res.status(200).type(fragment.mimeType).send(`${fragmentData}`);
+        return;
+      } else {
+        logger.error({ extension }, 'Unsupport extension demanded!');
+        res
+          .status(415)
+          .json(
+            createErrorResponse(
+              415,
+              'The fragment cannot be converted into the extension specified!'
+            )
+          );
+        return;
+      }
+    }
+
+    const fragmentData = await fragment.getData();
+
+    res.status(200).type(fragment.mimeType).send(fragmentData);
   } catch (error) {
     logger.error(`No fragment with ID ${fragmentId} found. Error: ${error}`);
     res.status(404).json(createErrorResponse(404, `No fragment with ID ${fragmentId} found`));
     return;
   }
-
-  if (extension) {
-    logger.debug(`Return fragment in type ${extension}`);
-
-    if (fragment.formats.includes(extension)) {
-      const fragmentData = await fragment.getData();
-      if (fragment.mimeType == 'text/markdown' && extension == 'text/html') {
-        const md = markdownit();
-        const result = md.render(`${fragmentData}`);
-        res.status(200).type(extension).send(result);
-        return;
-      }
-      res.status(200).type(fragment.mimeType).send(`${fragmentData}`);
-      return;
-    } else {
-      logger.error({ extension }, 'Unsupport extension demanded!');
-      res
-        .status(415)
-        .json(
-          createErrorResponse(415, 'The fragment cannot be converted into the extension specified!')
-        );
-      return;
-    }
-  }
-
-  const fragmentData = await fragment.getData();
-
-  res.status(200).type(fragment.mimeType).send(fragmentData);
 };
 
 const getFragmentInfo = async (req, res) => {
