@@ -45,7 +45,7 @@ COPY --chown=node:node ./src ./src
 COPY ./tests/.htpasswd ./tests/.htpasswd
 
 # Install curl for healthcheck
-RUN apk update && apk add --no-cache curl=8.8.0-r0
+RUN apk update && apk add --no-cache curl
 
 # Switch user to node
 # USER node
