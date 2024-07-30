@@ -52,12 +52,12 @@ RUN apk update && apk add --no-cache curl=8.9.0-r0
 
 # Start the container by running our server
 # fix the warning given by Halolint "warning: Use arguments JSON notation for CMD and ENTRYPOINT arguments"
-CMD ["npm", "start"]
+CMD ["node", "src/index.js"]
 
 
 # We run our service on port 8080
-EXPOSE 8080
+EXPOSE ${PORT}
 
 # Add a healthcheck layer (Querying healthcheck route '/')
 HEALTHCHECK --interval=15s --timeout=30s --start-period=10s --retries=3 \
-  CMD curl --fail localhost:8080 || exit 1
+  CMD curl --fail localhost:${PORT} || exit 1

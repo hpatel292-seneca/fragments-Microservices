@@ -40,12 +40,6 @@ module.exports = async (req, res) => {
   // fragment url
   const location = (process.env.API_URL || req.headers.host) + `/v1/fragments/${fragment.id}`;
 
-  // make sure location is properly created
-  // if (!location) {
-  //   logger.error({ location }, 'Error creating fragment location');
-  //   res.status(500).json(createErrorResponse(500, 'Internal Server Error'));
-  // }
-
   res
     .status(201)
     .location(location)
