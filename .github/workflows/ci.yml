@@ -74,10 +74,33 @@ jobs:
         # run: npm install-ci-test
         run: npm install-ci-test
 
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+      - name: Install node dependencies
+        # NOTE: we need to install dev dependencies too vs. production only for hurl
+        run: npm install
+      - name: Build Containers
+        run: docker compose up -d
+      - name: Setup Local AWS Resources
+        # NOTE: this file needs to be made executable *before* you check into git:
+        # $ chmod +x ./scripts/local-aws-setup.sh
+        run: ./scripts/local-aws-setup.sh
+      - name: Run Hurl Tests
+        run: npm run test:integration
+
   docker-hub:
     name: Build and Push to Docker Hub
     # Don't run this job any of the above three job passes
-    needs: [lint, dockerfile-lint, unit-tests]
+    needs: [lint, dockerfile-lint, unit-tests, integration-tests]
     runs-on: ubuntu-latest
     steps:
       # Set up buildx for optimal Docker Builds
