@@ -12,7 +12,7 @@ module.exports = async (req, res) => {
   // Getting the type of data.
   const { type } = contentType.parse(req);
 
-  logger.debug('Adding fragments of type ' + type);
+  logger.debug('Posting fragment of type ' + type);
 
   // get raw fragments data
   const rawFragmentData = req.body;
