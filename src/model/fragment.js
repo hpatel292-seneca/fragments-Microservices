@@ -22,15 +22,12 @@ const validTypes = [
   `text/html`,
   `text/csv`,
   `application/json`,
-  /*
-   Currently, only text/plain is supported. Others will be added later.
-
-  
+  `application/yaml`,
   `image/png`,
   `image/jpeg`,
   `image/webp`,
-  `image/gif`,
-  */
+  `image/gif`, // confirm we are excepting this as well.
+  `image/avif`,
 ];
 
 class Fragment {
