@@ -100,7 +100,7 @@ describe('Post /v1/fragments', () => {
 
   // post fragment with unsupported type
   test('post fragment with unsupported', async () => {
-    const type = 'image/png'; // not supported type
+    const type = 'image/abc'; // not supported type
     const res = await request(app)
       .post('/v1/fragments')
       .auth('user1@email.com', 'password1')
