@@ -90,6 +90,7 @@ jobs:
         run: npm install
       - name: Build Containers
         run: docker compose up -d
+        # Added this for making script executable.
       - name: Make local-aws-setup.sh executable
         run: chmod +x ./scripts/local-aws-setup.sh
       - name: Setup Local AWS Resources
