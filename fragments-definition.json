@@ -24,6 +24,10 @@
         {
           "name": "AWS_S3_BUCKET_NAME",
           "value": "hpatel292-fragments"
+        },
+        {
+          "name": "AWS_DYNAMODB_TABLE_NAME",
+          "value": "fragments"
         }
       ],
       "environmentFiles": [],
