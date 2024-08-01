@@ -265,5 +265,41 @@ describe('GET /v1/fragments/:id.ext', () => {
       expect(res.statusCode).toBe(200);
       expect(res.text).toBe(fileContent);
     });
+
+    test('markdown fragments data is returned in if markdown fragment ID is passed', async () => {
+      // post a fragment
+      const filePath = path.join(__dirname, '..', 'files', 'file.md');
+      const fileContent = fs.readFileSync(filePath, 'utf8');
+      const ownerId = hash('user1@email.com');
+      const type = 'text/markdown';
+      const id = 'rdmId';
+      const fragMetadata1 = new Fragment({ id: id, ownerId: ownerId, type: type });
+      fragMetadata1.setData(fileContent);
+      fragMetadata1.save();
+
+      const res = await request(app)
+        .get(`/v1/fragments/${id}`)
+        .auth('user1@email.com', 'password1');
+      expect(res.statusCode).toBe(200);
+      expect(res.text).toBe(fileContent);
+    });
+
+    test('markdown fragments data is returned in if fragmentID.md is passed', async () => {
+      // post a fragment
+      const filePath = path.join(__dirname, '..', 'files', 'file.md');
+      const fileContent = fs.readFileSync(filePath, 'utf8');
+      const ownerId = hash('user1@email.com');
+      const id = 'rdmId';
+      const type = 'text/markdown';
+      const fragMetadata1 = new Fragment({ id: id, ownerId: ownerId, type: type });
+      fragMetadata1.setData(fileContent);
+      fragMetadata1.save();
+
+      const res = await request(app)
+        .get(`/v1/fragments/${id}.md`)
+        .auth('user1@email.com', 'password1');
+      expect(res.statusCode).toBe(200);
+      expect(res.text).toBe(fileContent);
+    });
   });
 });
