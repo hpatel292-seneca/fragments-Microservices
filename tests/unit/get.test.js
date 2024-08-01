@@ -5,6 +5,8 @@ const hash = require('../../src/hash');
 const app = require('../../src/app');
 const { Fragment } = require('../../src/model/fragment');
 const markdownit = require('markdown-it');
+const fs = require('fs');
+const path = require('path');
 
 describe('GET /v1/fragments', () => {
   // If the request is missing the Authorization header, it should be forbidden
@@ -226,6 +228,42 @@ describe('GET /v1/fragments/:id.ext', () => {
         code: 415,
         message: 'The fragment cannot be converted into the extension specified!',
       },
+    });
+  });
+
+  describe('Original Fragments should be fetched successfully', () => {
+    test('Text fragments data is returned in if text fragment ID is passed', async () => {
+      // post a fragment
+      const filePath = path.join(__dirname, '..', 'files', 'file.txt');
+      const fileContent = fs.readFileSync(filePath, 'utf8');
+      const ownerId = hash('user1@email.com');
+      const id = 'rdmId10';
+      const fragMetadata1 = new Fragment({ id: id, ownerId: ownerId, type: 'text/plain' });
+      fragMetadata1.setData(fileContent);
+      fragMetadata1.save();
+
+      const res = await request(app)
+        .get(`/v1/fragments/${id}`)
+        .auth('user1@email.com', 'password1');
+      expect(res.statusCode).toBe(200);
+      expect(res.text).toBe(fileContent);
+    });
+
+    test('Text fragments data is returned in if fragment ID.txt is passed', async () => {
+      // post a fragment
+      const filePath = path.join(__dirname, '..', 'files', 'file.txt');
+      const fileContent = fs.readFileSync(filePath, 'utf8');
+      const ownerId = hash('user1@email.com');
+      const id = 'rdmId10';
+      const fragMetadata1 = new Fragment({ id: id, ownerId: ownerId, type: 'text/plain' });
+      fragMetadata1.setData(fileContent);
+      fragMetadata1.save();
+
+      const res = await request(app)
+        .get(`/v1/fragments/${id}.txt`)
+        .auth('user1@email.com', 'password1');
+      expect(res.statusCode).toBe(200);
+      expect(res.text).toBe(fileContent);
     });
   });
 });
