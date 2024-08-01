@@ -10,8 +10,8 @@ services:
     build: .
     # Environment variables to use
     # passing .env for development
-    env_file:
-      - .env
+    # env_file:
+    #   - .env
     environment:
       # Our API will be running on http://localhost:8080
       - API_URL=http://localhost:8080
