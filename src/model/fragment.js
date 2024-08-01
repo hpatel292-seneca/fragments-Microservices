@@ -222,7 +222,7 @@ class Fragment {
       },
       'image/jpeg': {
         '.png': async () => await sharp(fragmentData).png().toBuffer(),
-        '.jpg': async () => await sharp(fragmentData).jpeg().toBuffer(),
+        '.jpg': () => fragmentData,
         '.webp': async () => await sharp(fragmentData).webp().toBuffer(),
         '.gif': async () => await sharp(fragmentData).gif().toBuffer(),
         '.avif': async () => await sharp(fragmentData).avif().toBuffer(),
