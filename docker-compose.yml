@@ -16,7 +16,7 @@ services:
       # Our API will be running on http://localhost:8080
       - API_URL=http://localhost:8080
       # Use Basic Auth (for running tests, CI)
-      # - HTPASSWD_FILE=tests/.htpasswd
+      - HTPASSWD_FILE=tests/.htpasswd
       # Use the LOG_LEVEL set in the host environment, or default to info
       - LOG_LEVEL=${LOG_LEVEL:-info}
       - AWS_REGION=us-east-1
