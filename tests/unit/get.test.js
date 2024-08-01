@@ -797,5 +797,28 @@ describe('GET /v1/fragments/:id.ext', () => {
         })
       );
     });
+
+    test('JSON fragment should successfully converted to .yml', async () => {
+      // post a fragment
+      const filePath = path.join(__dirname, '..', 'files', 'file.json');
+      const fileContent = fs.readFileSync(filePath, 'utf8');
+      const ownerId = hash('user1@email.com');
+      const id = 'rdmId';
+      const type = 'application/json';
+      const fragMetadata1 = new Fragment({ id: id, ownerId: ownerId, type: type });
+      fragMetadata1.setData(fileContent);
+      fragMetadata1.save();
+      const res = await request(app)
+        .get(`/v1/fragments/${id}.yml`)
+        .auth('user1@email.com', 'password1');
+      expect(res.statusCode).toBe(200);
+      expect(res.text).toEqual(
+        yaml.dump({
+          student1: 'ABC',
+          student2: 'DEF',
+          student3: 'GHI',
+        })
+      );
+    });
   });
 });
