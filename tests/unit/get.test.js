@@ -669,7 +669,7 @@ describe('GET /v1/fragments/:id.ext', () => {
     });
   });
 
-  describe('Converted Fragments should be fetched successfully', () => {
+  describe('Markdown Fragments should be converted successfully', () => {
     test('Markdown fragment should successfully converted to HTML', async () => {
       // post a fragment
       const filePath = path.join(__dirname, '..', 'files', 'file.md');
@@ -688,6 +688,24 @@ describe('GET /v1/fragments/:id.ext', () => {
         .auth('user1@email.com', 'password1');
       expect(res.statusCode).toBe(200);
       expect(res.text).toBe(result);
+    });
+
+    test('Markdown fragment should successfully converted to txt', async () => {
+      // post a fragment
+      const filePath = path.join(__dirname, '..', 'files', 'file.md');
+      const fileContent = fs.readFileSync(filePath, 'utf8');
+      const ownerId = hash('user1@email.com');
+      const id = 'rdmId';
+      const type = 'text/markdown';
+      const fragMetadata1 = new Fragment({ id: id, ownerId: ownerId, type: type });
+      fragMetadata1.setData(fileContent);
+      fragMetadata1.save();
+
+      const res = await request(app)
+        .get(`/v1/fragments/${id}`)
+        .auth('user1@email.com', 'password1');
+      expect(res.statusCode).toBe(200);
+      expect(res.text).toBe(fileContent);
     });
   });
 });
