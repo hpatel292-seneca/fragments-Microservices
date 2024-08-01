@@ -8,6 +8,7 @@ const markdownit = require('markdown-it');
 const fs = require('fs');
 const path = require('path');
 const sharp = require('sharp');
+const csv = require('csvtojson');
 
 describe('GET /v1/fragments', () => {
   // If the request is missing the Authorization header, it should be forbidden
@@ -746,6 +747,29 @@ describe('GET /v1/fragments/:id.ext', () => {
         .auth('user1@email.com', 'password1');
       expect(res.statusCode).toBe(200);
       expect(res.text).toBe(fileContent);
+    });
+
+    test('CSV fragment should successfully converted to json', async () => {
+      // post a fragment
+      const filePath = path.join(__dirname, '..', 'files', 'file.csv');
+      const fileContent = fs.readFileSync(filePath, 'utf8');
+      const ownerId = hash('user1@email.com');
+      const id = 'rdmId';
+      const type = 'text/csv';
+      const fragMetadata1 = new Fragment({ id: id, ownerId: ownerId, type: type });
+      fragMetadata1.setData(fileContent);
+      fragMetadata1.save();
+      let jsonData;
+      csv()
+        .fromString(fileContent)
+        .then((jsonObj) => {
+          jsonData = jsonObj;
+        });
+      const res = await request(app)
+        .get(`/v1/fragments/${id}.json`)
+        .auth('user1@email.com', 'password1');
+      expect(res.statusCode).toBe(200);
+      expect(res.text).toBe(JSON.stringify(jsonData));
     });
   });
 });
