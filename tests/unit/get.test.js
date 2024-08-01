@@ -702,7 +702,27 @@ describe('GET /v1/fragments/:id.ext', () => {
       fragMetadata1.save();
 
       const res = await request(app)
-        .get(`/v1/fragments/${id}`)
+        .get(`/v1/fragments/${id}.txt`)
+        .auth('user1@email.com', 'password1');
+      expect(res.statusCode).toBe(200);
+      expect(res.text).toBe(fileContent);
+    });
+  });
+
+  describe('HTML Fragments should be converted successfully', () => {
+    test('HTML fragment should successfully converted to txt', async () => {
+      // post a fragment
+      const filePath = path.join(__dirname, '..', 'files', 'file.html');
+      const fileContent = fs.readFileSync(filePath, 'utf8');
+      const ownerId = hash('user1@email.com');
+      const id = 'rdmId';
+      const type = 'text/html';
+      const fragMetadata1 = new Fragment({ id: id, ownerId: ownerId, type: type });
+      fragMetadata1.setData(fileContent);
+      fragMetadata1.save();
+
+      const res = await request(app)
+        .get(`/v1/fragments/${id}.txt`)
         .auth('user1@email.com', 'password1');
       expect(res.statusCode).toBe(200);
       expect(res.text).toBe(fileContent);
