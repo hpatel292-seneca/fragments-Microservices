@@ -214,7 +214,7 @@ class Fragment {
         '.txt': () => fragmentData.toString('utf8'),
       },
       'image/png': {
-        '.png': async () => await sharp(fragmentData).png().toBuffer(),
+        '.png': () => fragmentData,
         '.jpg': async () => await sharp(fragmentData).jpeg().toBuffer(),
         '.webp': async () => await sharp(fragmentData).webp().toBuffer(),
         '.gif': async () => await sharp(fragmentData).gif().toBuffer(),
