@@ -150,17 +150,17 @@ class Fragment {
    */
   get formats() {
     const validConversions = {
-      'text/plain': ['.txt'],
-      'text/markdown': ['.md', '.html', '.txt'],
-      'text/html': ['.html', '.txt'],
-      'text/csv': ['.csv', '.txt', '.json'],
-      'application/json': ['.json', '.yaml', '.yml', '.txt'],
-      'application/yaml': ['.yaml', '.txt'],
-      'image/png': ['.png', '.jpg', '.webp', '.gif', '.avif'],
-      'image/jpeg': ['.png', '.jpg', '.webp', '.gif', '.avif'],
-      'image/webp': ['.png', '.jpg', '.webp', '.gif', '.avif'],
-      'image/avif': ['.png', '.jpg', '.webp', '.gif', '.avif'],
-      'image/gif': ['.png', '.jpg', '.webp', '.gif', '.avif'],
+      'text/plain': ['text/plain'],
+      'text/markdown': ['text/markdown', 'text/html', 'text/plain'],
+      'text/html': ['text/html', 'text/plain'],
+      'text/csv': ['text/csv', 'text/plain', 'application/json'],
+      'application/json': ['application/json', 'application/yaml', 'text/plain'],
+      'application/yaml': ['application/yaml', 'text/plain'],
+      'image/png': ['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/avif'],
+      'image/jpeg': ['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/avif'],
+      'image/webp': ['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/avif'],
+      'image/avif': ['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/avif'],
+      'image/gif': ['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/avif'],
     };
     return validConversions[this.mimeType] || false;
   }
