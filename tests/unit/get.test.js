@@ -7,6 +7,7 @@ const { Fragment } = require('../../src/model/fragment');
 const markdownit = require('markdown-it');
 const fs = require('fs');
 const path = require('path');
+const sharp = require('sharp');
 
 describe('GET /v1/fragments', () => {
   // If the request is missing the Authorization header, it should be forbidden
@@ -444,6 +445,30 @@ describe('GET /v1/fragments/:id.ext', () => {
         .auth('user1@email.com', 'password1');
       expect(res.statusCode).toBe(200);
       expect(res.text).toBe(fileContent);
+    });
+
+    test('PNG fragments data is returned in if PNG fragment ID is passed with no extension', async () => {
+      // post a fragment
+      const filePath = path.join(__dirname, '..', 'files', 'file.png');
+      const fileContent = fs.readFileSync(filePath);
+      const ownerId = hash('user1@email.com');
+      const id = 'rdmId';
+      const type = 'image/png';
+      const fragMetadata1 = new Fragment({ id: id, ownerId: ownerId, type: type });
+      fragMetadata1.setData(fileContent);
+      fragMetadata1.save();
+
+      const res = await request(app)
+        .get(`/v1/fragments/${id}`)
+        .auth('user1@email.com', 'password1');
+      expect(res.statusCode).toBe(200);
+      const receivedFileContent = res.body;
+
+      const receivedMetadata = await sharp(receivedFileContent).metadata();
+      const originalMetadata = await sharp(fileContent).metadata();
+
+      expect(receivedMetadata).toEqual(originalMetadata);
+      expect(Buffer.compare(receivedFileContent, fileContent)).toBe(0);
     });
   });
 });
