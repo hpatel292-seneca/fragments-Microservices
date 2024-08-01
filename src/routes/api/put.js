@@ -11,7 +11,7 @@ const updateFragment = async (req, res) => {
   const { type } = contentType.parse(req);
   const fragmentData = req.body;
   const ownerId = req.user;
-  logger.debug(`get fragment by ID ${id}`);
+  logger.debug(`update fragment by ID ${id}`);
 
   if (!Buffer.isBuffer(fragmentData)) {
     logger.warn({ type }, 'Trying to store unsupported fragment type!');

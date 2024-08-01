@@ -2,7 +2,6 @@
 const { createSuccessResponse, createErrorResponse } = require('../../response');
 const logger = require('../../logger');
 const { Fragment } = require('../../model/fragment');
-const markdownit = require('markdown-it');
 
 /**
  * Get a list of fragments for the current user
@@ -21,23 +20,25 @@ const getFragments = async (req, res) => {
 };
 
 const splitExtension = (id) => {
-  const mimeType = {
-    '.txt': 'text/plain',
-    '.md': 'text/markdown',
-    '.html': 'text/html',
-    '.csv': 'text/csv',
-    '.json': 'application/json',
-    '.png': 'image/png',
-    '.jpeg': 'image/jpeg',
-    '.webp': 'image/webp',
-    '.avif': 'image/avif',
-  };
   const arr = id.split('.');
-  const extension = arr[1] ? mimeType['.' + arr[1]] : '';
+  const extension = arr[1] ? '.' + arr[1] : null;
   // return extension and ID
   return { fragmentId: arr[0], extension: extension };
 };
-
+const mimeType = {
+  '.txt': 'text/plain',
+  '.md': 'text/markdown',
+  '.html': 'text/html',
+  '.csv': 'text/csv',
+  '.json': 'application/json',
+  '.yaml': 'application/yaml',
+  '.yml': 'application/yaml',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.webp': 'image/webp',
+  '.avif': 'image/avif',
+  '.gif': 'image/gif',
+};
 // Get fragment with passed fragmentID
 const getFragmentByID = async (req, res) => {
   // Get fragment ID send by user
@@ -55,18 +56,17 @@ const getFragmentByID = async (req, res) => {
     fragment = new Fragment(fragmentMetadata);
 
     if (extension) {
-      logger.debug(`Return fragment in type ${extension}`);
-
       if (fragment.formats.includes(extension)) {
-        const fragmentData = await fragment.getData();
-        if (fragment.mimeType == 'text/markdown' && extension == 'text/html') {
-          const md = markdownit();
-          const result = md.render(`${fragmentData}`);
-          res.status(200).type(extension).send(result);
+        logger.debug(`Return fragment in type ${extension}`);
+        try {
+          const fragmentData = await fragment.getConvertedInto(extension);
+          res.status(200).type(mimeType[extension]).send(fragmentData);
+          return;
+        } catch (err) {
+          logger.error({ err }, 'Error converting fragment');
+          res.status(415).json(createErrorResponse(415, err.message));
           return;
         }
-        res.status(200).type(fragment.mimeType).send(`${fragmentData}`);
-        return;
       } else {
         logger.error({ extension }, 'Unsupport extension demanded!');
         res
