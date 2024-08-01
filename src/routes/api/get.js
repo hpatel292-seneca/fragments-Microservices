@@ -56,7 +56,7 @@ const getFragmentByID = async (req, res) => {
     fragment = new Fragment(fragmentMetadata);
 
     if (extension) {
-      if (fragment.formats.includes(extension)) {
+      if (fragment.formats.includes(mimeType[extension])) {
         logger.debug(`Return fragment in type ${extension}`);
         try {
           const fragmentData = await fragment.getConvertedInto(extension);
