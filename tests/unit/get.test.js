@@ -9,6 +9,7 @@ const fs = require('fs');
 const path = require('path');
 const sharp = require('sharp');
 const csv = require('csvtojson');
+const yaml = require('js-yaml');
 
 describe('GET /v1/fragments', () => {
   // If the request is missing the Authorization header, it should be forbidden
@@ -770,6 +771,31 @@ describe('GET /v1/fragments/:id.ext', () => {
         .auth('user1@email.com', 'password1');
       expect(res.statusCode).toBe(200);
       expect(res.text).toBe(JSON.stringify(jsonData));
+    });
+  });
+
+  describe('JSON Fragments should be converted successfully', () => {
+    test('JSON fragment should successfully converted to .yaml', async () => {
+      // post a fragment
+      const filePath = path.join(__dirname, '..', 'files', 'file.json');
+      const fileContent = fs.readFileSync(filePath, 'utf8');
+      const ownerId = hash('user1@email.com');
+      const id = 'rdmId';
+      const type = 'application/json';
+      const fragMetadata1 = new Fragment({ id: id, ownerId: ownerId, type: type });
+      fragMetadata1.setData(fileContent);
+      fragMetadata1.save();
+      const res = await request(app)
+        .get(`/v1/fragments/${id}.yaml`)
+        .auth('user1@email.com', 'password1');
+      expect(res.statusCode).toBe(200);
+      expect(res.text).toEqual(
+        yaml.dump({
+          student1: 'ABC',
+          student2: 'DEF',
+          student3: 'GHI',
+        })
+      );
     });
   });
 });
