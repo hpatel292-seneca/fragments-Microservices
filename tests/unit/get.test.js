@@ -1168,5 +1168,28 @@ describe('GET /v1/fragments/:id.ext', () => {
       expect(receivedMetadata.format).toBe('png');
       expect(Buffer.compare(receivedFileContent, originalContent)).toBe(0);
     });
+
+    test('AVIF fragments data should converted to .jpg', async () => {
+      // post a fragment
+      const filePath = path.join(__dirname, '..', 'files', 'file.avif');
+      const fileContent = fs.readFileSync(filePath);
+      const ownerId = hash('user1@email.com');
+      const id = 'rdmId';
+      const type = 'image/avif';
+      const fragMetadata1 = new Fragment({ id: id, ownerId: ownerId, type: type });
+      fragMetadata1.setData(fileContent);
+      fragMetadata1.save();
+
+      const res = await request(app)
+        .get(`/v1/fragments/${id}.jpg`)
+        .auth('user1@email.com', 'password1');
+      expect(res.statusCode).toBe(200);
+      const receivedFileContent = res.body;
+
+      const receivedMetadata = await sharp(receivedFileContent).metadata();
+      const originalContent = await sharp(fileContent).jpeg().toBuffer();
+      expect(receivedMetadata.format).toBe('jpeg');
+      expect(Buffer.compare(receivedFileContent, originalContent)).toBe(0);
+    });
   });
 });
