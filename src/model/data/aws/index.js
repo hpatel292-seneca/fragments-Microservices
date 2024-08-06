@@ -143,21 +143,30 @@ async function listFragments(ownerId, expand = false) {
 // Delete a fragment's metadata and data from memory db. Returns a Promise
 async function deleteFragment(ownerId, id) {
   const paramsS3 = {
-      Bucket: process.env.AWS_S3_BUCKET_NAME,
-      Key: `${ownerId}/${id}`,
-    },
-    paramsDDB = {
-      TableName: process.env.AWS_DYNAMODB_TABLE_NAME,
-      Key: { ownerId, id },
-    };
+    Bucket: process.env.AWS_S3_BUCKET_NAME,
+    Key: `${ownerId}/${id}`,
+  };
+  const paramsDDB = {
+    TableName: process.env.AWS_DYNAMODB_TABLE_NAME,
+    Key: { ownerId, id },
+  };
 
   const commandS3 = new DeleteObjectCommand(paramsS3);
   const commandDDB = new DeleteCommand(paramsDDB);
 
   try {
-    await s3Client.send(commandS3);
-    await ddbDocClient.send(commandDDB);
-    logger.debug('Fragment deleted successfully');
+    // await s3Client.send(commandS3);
+    // await ddbDocClient.send(commandDDB);
+    // logger.debug('Fragment deleted successfully');
+    await Promise.all([
+      // Delete metadata from DynamoDB
+      ddbDocClient.send(commandDDB),
+      // Delete data from S3
+      s3Client.send(commandS3),
+    ]);
+
+    // Return success response
+    return { success: true };
   } catch (err) {
     logger.error({ err }, 'Error Deleting fragment');
     throw new Error('unable to delete fragment data');
