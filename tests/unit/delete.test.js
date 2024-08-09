@@ -18,6 +18,9 @@ describe('DELETE /v1/fragments/:id', () => {
       .auth('user1@email.com', 'password1');
     expect(res.statusCode).toBe(200);
     expect(res.body.status).toBe('ok');
+    // Again try to get same fragment
+    const res2 = await request(app).get(`/v1/fragments/${id}`).auth('user1@email.com', 'password1');
+    expect(res2.statusCode).toBe(404);
   });
 
   // Should throw if fragment didn't exist
