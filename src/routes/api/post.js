@@ -1,6 +1,7 @@
 const { Fragment } = require('../../model/fragment');
 const contentType = require('content-type');
 const logger = require('../../logger');
+const { validateFragment } = require('../../utils/typeValidation');
 
 // Importing utility functions which are helpful in creating the response.
 const { createSuccessResponse, createErrorResponse } = require('../../response');
@@ -9,16 +10,17 @@ const { createSuccessResponse, createErrorResponse } = require('../../response')
  * Add a new fragments for the current user
  */
 module.exports = async (req, res) => {
-  // Getting the type of data.
+  //   // Parse the content type from the request
   const { type } = contentType.parse(req);
 
   logger.debug('Posting fragment of type ' + type);
 
   // get raw fragments data
   const rawFragmentData = req.body;
+  logger.debug(`Fragment Body: ${rawFragmentData}`);
 
   if (!Buffer.isBuffer(rawFragmentData)) {
-    logger.warn({ type }, 'Trying to store unsupported fragment type!');
+    logger.error({ type }, 'Trying to store unsupported fragment type!');
     res
       .status(415)
       .json(createErrorResponse(415, 'Unsupported fragment type requested by the client!'));
@@ -27,6 +29,13 @@ module.exports = async (req, res) => {
 
   logger.debug({ contentType: type }, 'Content-Type accepted');
 
+  // Check whether the fragment data matches the content type
+  try {
+    await validateFragment(rawFragmentData, type);
+  } catch (error) {
+    logger.error({ error }, 'Unsupported Content-Type');
+    return res.status(415).send(createErrorResponse(415, `Unsupported Content-Type.`));
+  }
   let fragment;
 
   // Creating a fragment metadata!
