@@ -10,4 +10,4 @@ HTTP/1.1 415
 [Asserts]
 jsonpath "$.status" == "error"
 jsonpath "$.error.code" == 415
-jsonpath "$.error.message" == "Unsupported fragment type requested by the client!"
+jsonpath "$.error.message" == "Unsupported Content-Type"
