@@ -1,6 +1,8 @@
 const request = require('supertest');
 const hash = require('../../src/hash');
 const app = require('../../src/app');
+const fs = require('fs');
+const path = require('path');
 
 describe('Post /v1/fragments', () => {
   test('unauthenticated requests are denied', () => request(app).post('/v1/fragments').expect(401));
@@ -84,7 +86,8 @@ describe('Post /v1/fragments', () => {
 
   // Authenticated user can create image/png fragments
   test('authenticated user can create image/png fragments and location must returned in header', async () => {
-    const fileContent = 'This is a test file content';
+    const filePath = path.join(__dirname, '..', 'files', 'file.png');
+    const fileContent = fs.readFileSync(filePath);
     const res = await request(app)
       .post('/v1/fragments')
       .auth('user1@email.com', 'password1')
@@ -97,7 +100,8 @@ describe('Post /v1/fragments', () => {
 
   // Authenticated user can create image/jpeg fragments
   test('authenticated user can create image/jpeg fragments and location must returned in header', async () => {
-    const fileContent = 'This is a test file content';
+    const filePath = path.join(__dirname, '..', 'files', 'file.jpeg');
+    const fileContent = fs.readFileSync(filePath);
     const res = await request(app)
       .post('/v1/fragments')
       .auth('user1@email.com', 'password1')
@@ -110,7 +114,8 @@ describe('Post /v1/fragments', () => {
 
   // Authenticated user can create image/webp fragments
   test('authenticated user can create image/webp fragments and location must returned in header', async () => {
-    const fileContent = 'This is a test file content';
+    const filePath = path.join(__dirname, '..', 'files', 'file.webp');
+    const fileContent = fs.readFileSync(filePath);
     const res = await request(app)
       .post('/v1/fragments')
       .auth('user1@email.com', 'password1')
@@ -123,7 +128,8 @@ describe('Post /v1/fragments', () => {
 
   // Authenticated user can create image/avif fragments
   test('authenticated user can create image/avif fragments and location must returned in header', async () => {
-    const fileContent = 'This is a test file content';
+    const filePath = path.join(__dirname, '..', 'files', 'file.avif');
+    const fileContent = fs.readFileSync(filePath);
     const res = await request(app)
       .post('/v1/fragments')
       .auth('user1@email.com', 'password1')
@@ -136,7 +142,8 @@ describe('Post /v1/fragments', () => {
 
   // Authenticated user can create image/gif fragments
   test('authenticated user can create image/gif fragments and location must returned in header', async () => {
-    const fileContent = 'This is a test file content';
+    const filePath = path.join(__dirname, '..', 'files', 'file.gif');
+    const fileContent = fs.readFileSync(filePath);
     const res = await request(app)
       .post('/v1/fragments')
       .auth('user1@email.com', 'password1')
@@ -187,5 +194,18 @@ describe('Post /v1/fragments', () => {
 
     expect(res.statusCode).toBe(415);
     expect(res.body.error.message).toBe('Unsupported fragment type requested by the client!');
+  });
+
+  // post fragment with unsupported type
+  test('post fragment with different file and content-type should throw error', async () => {
+    const type = 'image/png';
+    const res = await request(app)
+      .post('/v1/fragments')
+      .auth('user1@email.com', 'password1')
+      .set('Content-Type', type)
+      .send('This is a fragment');
+
+    expect(res.statusCode).toBe(415);
+    expect(res.body.error.message).toBe('Unsupported Content-Type.');
   });
 });
