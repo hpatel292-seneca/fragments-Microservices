@@ -1,48 +1,151 @@
-## Cloud Computing for Programmers(CCP555)
 
-## fragments
+# **Fragments Microservices**
 
-This document specifies the API for the Fragments Microservice, a cloud-based microservice developed for a fictional Canadian manufacturing company. The Fragments Microservice is designed to store and manage small fragments of text and images, which are used across various systems including IoT devices, mobile apps, and automated cameras.
+## **Project Overview**
 
-## API Routes
+Fragments Microservices is a cloud-native microservice-based application designed to store, retrieve, and manage user-generated content (fragments) such as text, JSON, and binary data (e.g., images). The application is built using **Node.js**, **Express.js**, and deployed on **AWS** services for scalability and security.
 
-### 1. /
+The system allows users to perform basic CRUD operations on their fragments, with authentication and authorization handled via **Amazon Cognito**. Data is stored in **AWS DynamoDB** for metadata and **Amazon S3** for binary content.
 
-#### GET /
+## **Live Demo**
 
-- Description: Health check route.
-- Response: Status, Author, Github Repo URL and Version.
+Watch the demo video of the Fragments Microservices project on YouTube:
 
-### 2. /v1/Fragments
+[![Live Demo](https://img.youtube.com/vi/VLnv6qNixxg/0.jpg)](https://www.youtube.com/watch?v=VLnv6qNixxg&feature=youtu.be)
 
-#### POST /v1/Fragments
+---
 
-- Description: Creates a new fragment.
-- Request Body: Raw binary data.
-- Headers: Content-Type specifying the fragment type.
-- Response: HTTP 201 with fragment metadata.
+## **Features**
 
-#### GET /v1/fragments
+- **User Authentication & Authorization:** Secured with **Amazon Cognito** to ensure only authenticated users can access the API.
+- **Fragment Management:** Users can create, retrieve, update, and delete fragments (text, JSON, or images).
+- **Scalable Data Storage:**
+  - Metadata is stored in **AWS DynamoDB**.
+  - Binary data is stored in **Amazon S3**.
+- **Microservices Architecture:** The application is containerized using **Docker** and follows a microservices architecture for easy scalability.
+- **Logging and Monitoring:** Integrated structured logging using **Pino** for efficient monitoring and error tracking.
+- **Automated Testing:** Comprehensive unit and integration tests using **Jest** and **Supertest**.
 
-- Description: Retrieves IDs of all fragments owned by the user.
-- Response: HTTP 200 with an array of fragment IDs
+---
 
-#### GET /v1/fragments?expand=1
+## **Technologies Used**
 
-Description: Retrieves detailed metadata of all fragments owned by the user.
-Response: HTTP 200 with an array of fragment metadata.
+- **Backend:** Node.js, Express.js
+- **Authentication:** Amazon Cognito, Passport.js
+- **Database:** Amazon DynamoDB (NoSQL)
+- **Storage:** Amazon S3
+- **CI/CD & Containers:** Docker, GitHub Actions, Docker Compose, LocalStack
+- **Testing:** Jest, Supertest, Hurl
+- **Logging:** Pino
+- **Cloud Infrastructure:** AWS EC2, AWS Lambda, AWS SDK
+- **Version Control:** Git, GitHub
 
-### 3. /v1/fragments/:id
+---
 
-#### GET /v1/fragments/:id
+## **Installation Instructions**
 
-- Description: Retrieves fragment data.
-- Response: HTTP 200 with fragment data.
+To set up this project locally:
 
-#### GET /v1/fragments/:id .html, .txt, .md
+1. **Clone the Repository:**
 
-- Description: Retrieves fragment data in a specified format.
-- Response: HTTP 200 with converted fragment data.
+   ```bash
+   git clone https://github.com/hpatel292-seneca/fragments-Microservices.git
+   cd fragments-Microservices
+   ```
+
+2. **Install Dependencies:**
+
+   ```bash
+   npm install
+   ```
+
+3. **Set Up Environment Variables:**
+
+   Create a `.env` file in the root directory with the following variables:
+
+   ```bash
+   AWS_ACCESS_KEY_ID=<your-access-key>
+   AWS_SECRET_ACCESS_KEY=<your-secret-key>
+   AWS_REGION=<your-aws-region>
+   S3_BUCKET_NAME=<your-s3-bucket-name>
+   DYNAMODB_TABLE_NAME=<your-dynamodb-table-name>
+   COGNITO_POOL_ID=<your-cognito-user-pool-id>
+   ```
+
+4. **Run the Application:**
+
+   ```bash
+   npm start
+   ```
+
+5. **Run Tests:**
+
+   To run the test suite:
+
+   ```bash
+   npm test
+   ```
+
+---
+
+## **Usage**
+
+Once the application is up and running, you can access the API endpoints for managing fragments:
+
+- **Create Fragment:**
+  - POST `/v1/fragments`
+- **Get Fragment:**
+  - GET `/v1/fragments/:id`
+- **Update Fragment:**
+  - PUT `/v1/fragments/:id`
+- **Delete Fragment:**
+  - DELETE `/v1/fragments/:id`
+
+Refer to the Postman collection provided for detailed API usage.
+
+---
+
+## **API Documentation**
+
+- **Base URL:** `http://localhost:8080/v1/fragments`
+- **Authentication:** The API uses **Amazon Cognito** tokens for authentication. Include the `Authorization` header with a valid token for each request.
+
+### **Endpoints:**
+
+1. **POST /fragments**
+   - Create a new fragment (text, JSON, or binary data).
+   
+2. **GET /fragments/:id**
+   - Retrieve a specific fragment by its ID.
+
+3. **PUT /fragments/:id**
+   - Update an existing fragment.
+
+4. **DELETE /fragments/:id**
+   - Delete a fragment.
+
+---
+
+## **Testing**
+
+The project includes unit tests and integration tests to ensure code quality and functionality. You can run tests using:
+
+```bash
+npm test
+```
+
+---
+
+## **Contact**
+
+For any inquiries or suggestions, feel free to reach out via:
+
+- **GitHub:** [hpatel292-seneca](https://github.com/hpatel292-seneca)
+- **Email:** [26harshilpatel@gmail.com](mailto:26harshilpatel@gmail.com)
+
+---
+
+This documentation is designed to provide an overview of your project, highlight the technologies used, and offer clear instructions on installation, usage, and contributing. Let me know if you need further customization!
 
 ## Package.json Scripts
 
